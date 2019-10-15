@@ -1,5 +1,4 @@
 # embedded-Linux-programming
-My embedded Linux programming source
+嵌入式 Linux 编程的源码文件。
 
-## 你还可以在 CSDN 上查看我的相关文章
-https://blog.csdn.net/weixin_43391310/article/details/102327417
+## 进入相应文件夹即有相关操作
