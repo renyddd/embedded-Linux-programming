@@ -26,9 +26,50 @@ int main(int argc, char* argv[])
        exit(1);
    }
 
+/*
+// strcpy(buffer, "This is My Schoolnumber: 17407110216\0");
+   strcpy(buffer, argv[2]);
+   
+// 若已向内存空间写入成功，则显示一次字符串
+   if( write(fd, buffer, strlen(buffer)) + 1)
+       printf("\nBuffer=%s\n\n", buffer);
+   else
+   {
+       printf("Write failed!\n");
+       exit(1);
+   }
 
+// 第一次写入内容后，添加换行的操作
+   if( write(fd, newLineBuffer, strlen(newLineBuffer)) + 1)
+       printf("\nInserted an new line.\n");
+   else
+   {
+       printf("Failed to insert an new line.");
+       exit(1);
+   }
+
+   if(! close(fd) )
+       printf("\nClosed the file.\n");
+   else
+   {
+       printf("Closed failed!\n");
+       exit(1);
+   }
+// 文件的第一次关闭
+*/
+
+   // lseek()
    printf("Let's lseek()\n************************************\n");
-// 打开文件获取到文件操作符后，通过 lseek 将偏移量移动至文件的最后一个字节   
+
+   if( (fd = open(argv[1], O_RDWR|O_CREAT, 0644)) >= 0 )
+       printf("Open success, fd = %d \n", fd);
+   else
+   {
+       printf("Open failed!\n");
+       exit(1);
+   }
+
+// 再次打开文件获取到文件操作符后，通过 lseek 将偏移量移动至文件的最后一个字节   
    lseek(fd, 0, SEEK_END);
       
    strcpy(buffer, argv[2]);
