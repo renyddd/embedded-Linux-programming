@@ -10,16 +10,17 @@
 char buffer[MAX_NUM];
 //  定义存储换行的缓冲区
 char newLineBuffer[5]="\n";
+int retnu=100;
 
 int main(int argc, char* argv[])
-// 参数 1 为源码文件名，参数 2 为操作文件名， 参数 3 为要操作的字符串
+// 参数 1 为程序文件名，参数 2 为操作文件名， 参数 3 为要操作的字符串
 {
    int fd;
    memset(buffer, 0, MAX_NUM); // 向 buffer 空间写入 0
    umask(0000); // umask 与 mode 共同决定文件的权限
 
    if( (fd = open(argv[1], O_RDWR|O_CREAT, 0644)) >= 0 )
-       printf("Open success, fd = %d \n", fd);
+       printf("Open success\n");
    else
    {
        printf("Open failed!\n");
@@ -33,7 +34,7 @@ int main(int argc, char* argv[])
       
    strcpy(buffer, argv[2]);
 
-   if( write(fd, buffer, strlen(buffer)) + 1)
+   if( write(fd, buffer, strlen(buffer)) != -1)
        printf("\nBuffer=%s\n\n", buffer);
    else
    {
@@ -42,13 +43,38 @@ int main(int argc, char* argv[])
    }
    
 // 成功写入 buffer 内容后，追加写入 newLineBuffer 的换行内容
-   if( write(fd, newLineBuffer, strlen(newLineBuffer)) + 1)
+   if( write(fd, newLineBuffer, strlen(newLineBuffer)) !=  -1)
        printf("\nInserted an new line.\n");
    else
    {
        printf("Failed to insert an new line.");
        exit(1);
    }
+
+
+   if(! close(fd) )
+       printf("\nClosed the file.\n");
+   else
+   {
+       printf("Closed failed!\n");
+       exit(1);
+   }
+
+   // open again
+   if( (fd = open(argv[1], O_RDWR|O_CREAT, 0644)) >= 0 )
+       printf("Open success\n");
+   else
+   {
+       printf("Open failed!\n");
+       exit(1);
+   }
+
+   
+   printf("file context:\n\n\n\n");
+   
+   read(fd, buffer, 1024);
+
+   printf("%s", buffer);
 
    if(! close(fd) )
        printf("\nClosed the file.\n");

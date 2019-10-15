@@ -3,4 +3,4 @@ a.out: homework.c
 
 clean:
 	rm ./a.out
-	rm hello.txt
+	rm ./hello.txt
