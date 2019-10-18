@@ -1,13 +1,19 @@
 ## 克隆仓库
+首先你在想要存储本仓库的位置上进行克隆操作
 ```
 git clone https://github.com/renyddd/embedded-Linux-programming.git
 ```
 
 ## 电脑上执行的编译操作
+切换至 fileIO 的目录
+```shell
+cd embedded-Linux-programming/fileIO
+```
+接下来的编译操作
 ```shell
 make
 ```
-用以生成``` ./a.out``` 程序文件
+用以生成``` a.out``` 程序文件
 
 ### 程序执行
 - 传入参数 1：将要操作的文件名
@@ -15,7 +21,7 @@ make
 ```shell
 ./a.out hello.txt "This is my school number: 17407110216."
 ```
-程序成功执行后，自行查看文件内容
+程序成功执行后，可自行查看文件内容
 ```shell
 cat hello.txt
 ```
