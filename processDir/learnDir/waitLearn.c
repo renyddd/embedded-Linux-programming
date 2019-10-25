@@ -14,7 +14,7 @@ int main(int argc, char *argv[])
 
     if ( argc < 2 || strcmp(argv[1], "--help") == 0)
     {
-        printf("try again!\n");
+        printf("try again! and type at lease one argument.\n");
         exit(1);
     }
 
@@ -24,40 +24,28 @@ int main(int argc, char *argv[])
     {
         switch (fork()) {
             case -1:
-                perror("fork()");break;
+                perror("fork()");
+                exit(1);
 
             case 0:
                 printf("the PID of child %d is: %d\n", j, getpid());
-                break;
+                printf("My parent is %d\n", getppid());
+                sleep(5);
+                printf("I (child) wake up!\n");
+                exit(0);
 
             default: 
-                printf("I am in my parent.\n");
-                break;
+                printf("I am the parent, my PID: %d\n", getpid());
+                wait(NULL);
+         // 若在此处注释 wait() 语句，则子进程的 PPID 将显示为 1，
+         // 即成为孤儿进程，被 init 接管
         }
     }
 
-    numDead = 0;
-
-    for (;;)  // Parent waits for each child to exit.
-    {
-       childPid = wait(NULL);
-       if (childPid == -1)
-       {
-           if (errno == ECHILD)
-           {
-               printf("No more child\n");
-               exit(EXIT_SUCCESS);
-           }
-           else
-           {
-               perror("other wrong");
-               exit(1);
-           }
-       }
-        numDead++;
-        printf("wiat() returned child PID is %d\n", childPid);
-    }
-
+    // Now in the parent.
+    //
+    printf("I (parent) finished my jobs.\n");
+    
     return 0;
 
 }
