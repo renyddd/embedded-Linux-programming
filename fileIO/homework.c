@@ -70,7 +70,7 @@ int main(int argc, char* argv[])
    }
 
    
-   printf("file context:\n\n\n\n");
+   printf("file content:\n\n\n\n");
    
    read(fd, buffer, 1024);
 

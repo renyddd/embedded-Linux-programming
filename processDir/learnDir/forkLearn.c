@@ -7,25 +7,21 @@
 
 int main(int argc, char *argv[])
 {
-    pid_t childPid;
-
-    switch (childPid = fork()) {
-        case -1:
-            // Handle error
+    switch (fork()) {
+        case -1: // Handle error
             perror("fork error");
             exit(1);
 
-        case 0:
-            // Perform actions specific to child
-            printf("I am in child process\n");
+        case 0:  // Perform actions specific to child
+            printf("This is child process, PID is %d\n", getpid());
+            printf("My PPID is %d\n", getppid());
             break;
 
-        default:
-            // Perform actions specific to parent
-            printf("I am in parent process\n");
+        default: // Perform actions specific to parent
+            printf("This is parent process, PID is %d\n", getpid());
     }
 
-    printf("This will all be done!\n");
-    return 0;
+    printf("This will be shown in both parent and child! %d\n\n", getpid());
 
+    return 0;
 }
