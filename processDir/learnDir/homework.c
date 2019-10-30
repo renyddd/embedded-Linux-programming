@@ -20,7 +20,7 @@ int main(int argc, char *argv[])
         printf("some help\n");
         exit(1);
     }
-    // 或是使用系统调用 getopt
+
     if (strcmp(argv[1], "1") == 0)
         strcpy(child_name, "gongyueshu");
     else if (strcmp(argv[1], "2") == 0)
