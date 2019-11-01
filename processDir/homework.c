@@ -17,10 +17,16 @@ int main(int argc, char *argv[])
     
     if ( argc < 2 || strcmp(argv[1], "--help") ==0 )
     {
-        printf("some help\n");
+        printf("用法：./a.out [选项]\n \
+根据选项的内容，装载不同的子进程。\n\n \
+1       计算两数公约数 \n \
+2       判断某年是否为闰年 \n \
+3       显示时间 \n \
+--help  显示此帮助信息\n");
         exit(1);
     }
-    // 或是使用系统调用 getopt
+
+    // 根据命令行接收到的字符串参数，作出判断
     if (strcmp(argv[1], "1") == 0)
         strcpy(child_name, "gongyueshu");
     else if (strcmp(argv[1], "2") == 0)
