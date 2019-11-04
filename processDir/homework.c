@@ -17,7 +17,7 @@ int main(int argc, char *argv[])
     
     if ( argc < 2 || strcmp(argv[1], "--help") ==0 )
     {
-        printf("用法：./a.out [选项]\n \
+        printf("用法：./a.out [选项]\n\n \
 根据选项的内容，装载不同的子进程。\n\n \
 1       计算两数公约数 \n \
 2       判断某年是否为闰年 \n \
