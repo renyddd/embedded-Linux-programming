@@ -1,3 +1,4 @@
+#include <string.h>
 #include "ElemSN.h"
 
 int ab[]={3,2,3,2,4,3,6,9,3,2,0,0,4};
@@ -16,7 +17,7 @@ ElemSN *DelSomeNode(ElemSN *h, int key)
         {
             q->next = p->next;
             free(p);
-            p = p->next;
+            p = q->next;
         }
         else
         {
@@ -31,6 +32,12 @@ ElemSN *DelSomeNode(ElemSN *h, int key)
 int main(int argc, char *argv[])
 {
     ElemSN *head;
+
+    if ( argc < 2 || strcmp(argv[1], "--help") ==0 )
+    {
+        printf("用法：./a.out [选项]\n");
+        exit(1);
+    }
     int deldata = atoi(argv[1]);
 
     head = CreateLink1(ab);

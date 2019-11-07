@@ -1,8 +1,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#define N 8
-int a[N] = {3, 2, 5, 8, 4, 7, 6, 9,};
+#define N 10
+int a[N] = {3, 2, 5, 8, 4, 7, 6, 9,1,10};
 
 typedef struct node{
     int data;
