@@ -27,14 +27,13 @@ ElemSN *CreateLink1(int a[])
     return h;
 }
 
-// 不带表头结点，的链表打印
+// 不待表头结点，的链表打印
 void PrintLink(ElemSN *h)
 {
     ElemSN *p;
     printf("the data is: \t");
     for (p = h; p; p = p->next)
         printf("%d\t", p->data);
-    printf("\n");
 }
 
 /*
@@ -47,7 +46,7 @@ void PrintLink(ElemSN *h)
 */
                                                  
 // 创建带表头结点的链表
-ElemSN *CreateLink(int a[], int n)
+ElemSN *CreateHLink(int a[], int n)
 {
     ElemSN *h, *t;
     h = t = (ElemSN *)malloc(sizeof(ElemSN));
@@ -70,3 +69,9 @@ void PrintHLink(ElemSN *h)
         printf("%d\t", p->next->data);
     printf("\n");
 }
+
+
+
+
+
+
