@@ -5,6 +5,7 @@
 #include <errno.h>  
 #include <sys/types.h>  
 #include <sys/socket.h>  
+#include <arpa/inet.h>
 #include <netinet/in.h>  
 
 #define PORTNUM 8888
@@ -16,19 +17,22 @@ void error_die(const char *sc)
     exit(1);
 }
 
+void print_len(const char *sc)
+{
+    printf("===== %s =====\n", sc);
+}
+
 int main(int argc, char *argv[])
 {
     int socket_fd, connect_fd;
     struct sockaddr_in servaddr, clientaddr;
     char buff[MAXLEN];
     int n;
-//    char *ss;
     socklen_t sizelen;
-//    char serviceMsg[] = "service: connected!\n";
 
     if ( (socket_fd = socket(AF_INET, SOCK_STREAM, 0)) == -1)
         error_die("create socket");
-    printf("=====created socket=====\n");
+    print_len("create socket");
 
     // 初始化
     memset(&servaddr, 0, sizeof(struct sockaddr_in));
@@ -39,27 +43,28 @@ int main(int argc, char *argv[])
     // note sizeof
     if ( bind(socket_fd, (struct sockaddr *) &servaddr, sizeof(struct sockaddr)) == -1)
         error_die("bind error");
-    printf("=====bound done=====\n");
+    print_len("bound done");
 
     if ( listen(socket_fd, 10) == -1)
         error_die("listen error");
-    printf("=====listened done=====\n");
+    print_len("listened done");
 
-    printf("=====waiting for client's request=====\n");
+    print_len("waiting fo client's request");
 
     sizelen = sizeof(struct sockaddr_in);
 
     while (1) {
+        // 阻塞
         if ((connect_fd = accept(socket_fd, (struct sockaddr *)&clientaddr, &sizelen)) == -1)
             error_die("connect error");
         
-        printf("=====accept the client===== \r\nConnect from  : %d\r\n", ntohs(clientaddr.sin_port));
-        //printf("=====accept the client===== \r\nConnect from %#x : %#x\r\n", inet_ntoa( ntohl(clientaddr.sin_addr.s_addr)), ntohs(clientaddr.sin_port));
-//        printf("%s", ss);
-
+        print_len("accept the client");
+        printf("\r\nConnect from %s : %d\r\n", inet_ntoa(clientaddr.sin_addr), ntohs(clientaddr.sin_port));
+        //printf("\r\nConnect from %#x : %#x\r\n", inet_ntoa( ntohl(clientaddr.sin_addr.s_addr)), ntohs(clientaddr.sin_port));
 
         if (!fork()) 
         {
+            // child
             n = recv(connect_fd, buff, MAXLEN, 0);
         
             buff[n] = '\0';

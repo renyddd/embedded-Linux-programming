@@ -36,12 +36,15 @@ int main(int argc, char *argv[])
     memset(&servaddr, 0, sizeof(struct sockaddr_in));
     servaddr.sin_family = AF_INET;
     servaddr.sin_port = htons(8888);
+
     if ( inet_pton(AF_INET, argv[1], &servaddr.sin_addr) == -1)
         error_die("inet_pton error");
-    //
+    
     lensize =  sizeof(struct sockaddr_in);
+
     if ( (conf=connect(socket_fd, (struct sockaddr *) &servaddr, lensize)) == -1)
         error_die("connect error");
+
     printf("\n%d",conf);
     printf("send msg to service: \n");
     fgets(sendmsg, MAXLEN, stdin);
@@ -50,5 +53,6 @@ int main(int argc, char *argv[])
         error_die("write error");
 
     close(socket_fd);
+    
     return 0;
 }
