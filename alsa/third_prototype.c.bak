@@ -75,7 +75,6 @@ void bmp_show(char *bmp_name)
 	close(fd_bmp);
 	
 	munmap(fp, 800*480*4);	
-	
 }
 
 void  get_xy(int *x, int *y)
@@ -136,14 +135,15 @@ int main()
     struct tm * mytime;
     time_t tmp;
     tmp = time(NULL);
-    mytime = localtime(&time);
+    mytime = localtime((time_t *)&time);
 
-    char *wav_file_dir = {"./record_repository/test.wav"};
+    char wav_file_dir[100] = {"./record_repository/test_\0"};
 
-    char *wav_file_name = {""};
-    //sprintf(wav_file_name, "%d", x);
+    char wav_file_name[100] = {"\0"};
+    sprintf(wav_file_name, "%d", mytime->tm_sec);
+    char * p_wav_file_name = NULL;
 
-    //wav_file_name = strcat(wav_file_dir, "11");
+    p_wav_file_name = strcat(wav_file_dir, wav_file_name);
     char *arg_list[] = {
         "arecord", "-r",
         "16000",
@@ -152,8 +152,7 @@ int main()
         "-f",
         "S16_LE",
         "--duration=5",
-        //wav_file_name,
-        "1111",
+        p_wav_file_name,
         NULL
     };
 
@@ -189,7 +188,7 @@ int main()
                 case 0:
                     // child, do execvp job.
                     printf("enter child process.\n");
-                    printf("H:%d  M:%d   S:%d\n",mytime->tm_hour, mytime->tm_min, mytime->tm_sec);
+                    printf("H:%d  M:%d   S:%d\n", mytime->tm_hour, mytime->tm_min, mytime->tm_sec);
                     execvp("arecord", arg_list);
                     printf("if exec failed.\n");
 
