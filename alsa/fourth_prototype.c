@@ -139,7 +139,10 @@ int main()
 
     char *p_wav_file_name = NULL;
 
+    char wav_file_name[20];
+
     char *arg_list[] = {NULL};
+
 
     //bmp_show("/mnt/m.bmp");
     bmp_show("/mnt/UI.bmp");
@@ -163,7 +166,7 @@ int main()
          * x >= 722
          * y <= 300
          */
-        if ( x >= 722 && y <= 300)
+        else if ( x >= 722 && y <= 300)
         {
             printf("caught the touch!\n");
 
@@ -174,14 +177,18 @@ int main()
 
                 case 0:
                     // child, do execvp job.
+                    printf("coming into case 0.\n");
                     time(&tmp);
                     mytime = localtime(&tmp);
-                    char wav_file_name[100] = {"\0"};
+                    printf("mytime got the value. %s%d_%d_%d.wav\n", wav_file_dir, mytime->tm_hour,mytime->tm_min, mytime->tm_sec);
 
                     // name process.
-                    sprintf(wav_file_name, "%d_%d_%d.wav",mytime->tm_hour,mytime->tm_min, mytime->tm_sec);
+                    sprintf(wav_file_name, "%d_%d_%d.wav", mytime->tm_hour,mytime->tm_min, mytime->tm_sec);
+                    printf("going to show wav_file_name: ");
+                    printf("%s\n", wav_file_name);
 
                     p_wav_file_name = strcat(wav_file_dir, wav_file_name);
+                    printf("display the p_wav_file_name: %s\n", p_wav_file_name);
                     char *tmp_list[] = {
                         "arecord", "-r",
                         "16000",
@@ -193,11 +200,12 @@ int main()
                         p_wav_file_name,
                         NULL
                     };
-                    strcpy(*arg_list, *tmp_list);
+                    printf("going to strcpy process.\n");
+                    // strcpy(*arg_list, *tmp_list);
 
                     printf("enter child process.\n");
                     printf("H:%d  M:%d   S:%d\n", mytime->tm_hour, mytime->tm_min, mytime->tm_sec);
-                    execvp("arecord", arg_list);
+                    execvp("arecord", tmp_list);
                     printf("if exec failed.\n");
 
                 default:
@@ -212,7 +220,7 @@ int main()
          * x > 722
          * y > 300
          */
-        if ( x > 722 && y > 300 )
+        else if ( x > 722 && y > 300 )
         {
             printf("come into aplay field.\n");
 
