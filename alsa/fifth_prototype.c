@@ -4,7 +4,6 @@
 #include <sys/wait.h>
 #include <sys/types.h>
 #include <stdio.h>
-#include <sys/types.h>
 #include <sys/stat.h>
 #include <fcntl.h>
 #include <string.h>
@@ -14,6 +13,7 @@
 #include <math.h>
 #include <stdarg.h>
 #include <time.h>
+#include <dirent.h>
 
 void bmp_show(char *bmp_name)
 {
@@ -123,14 +123,8 @@ void  get_xy(int *x, int *y)
 	close(fd_touch);
 }
 
-
-int main()
+void exec_arecord()
 {
-    int x = 400;
-    int y = 240;
-    
-    pid_t childPid;
-    
     // get time.
     struct tm * mytime;
     time_t tmp;
@@ -140,12 +134,55 @@ int main()
     char *p_wav_file_name = NULL;
 
     char wav_file_name[20];
+    // child, do execvp job.
+    // printf("coming into case 0.\n");
 
+    time(&tmp);
+    mytime = localtime(&tmp);
+    // printf("mytime got the value. %s%d_%d_%d.wav\n", wav_file_dir, mytime->tm_hour,mytime->tm_min, mytime->tm_sec);
+
+    // name process.
+    sprintf(wav_file_name, "%d_%d_%d.wav", mytime->tm_hour,mytime->tm_min, mytime->tm_sec);
+    // printf("going to show wav_file_name: ");
+    // printf("%s\n", wav_file_name);
+
+    p_wav_file_name = strcat(wav_file_dir, wav_file_name);
+
+    char *tmp_list[] = {
+        "arecord",
+        "-r",
+        "16000",
+        "-t",
+        "wav",
+        "-f",
+        "S16_LE",
+        "--duration=5",
+        p_wav_file_name,
+        NULL
+    };
+    
+    printf("\nYour record file is: %s\n", p_wav_file_name);
+    printf("It will last for 5 seconds.\n");
+    // printf("going to strcpy process.\n");
+    // strcpy(*arg_list, *tmp_list);How to cpoy the array of the points?
+
+    //printf("enter child process.\n");
+    // printf("H:%d  M:%d   S:%d\n", mytime->tm_hour, mytime->tm_min, mytime->tm_sec);
+    execvp("arecord", tmp_list);
+    printf("the exec (record) failed.\n");
+}
+
+int main()
+{
+    int x = 400;
+    int y = 240;
+    
+    pid_t childPid;
+    
     char *arg_list[] = {NULL};
 
-
     //bmp_show("/mnt/m.bmp");
-    bmp_show("/mnt/UI.bmp");
+    bmp_show("/mnt/UI2.0.bmp");
 
     while(1) {
 
@@ -176,38 +213,7 @@ int main()
                     exit(1);
 
                 case 0:
-                    // child, do execvp job.
-                    // printf("coming into case 0.\n");
-                    time(&tmp);
-                    mytime = localtime(&tmp);
-                    // printf("mytime got the value. %s%d_%d_%d.wav\n", wav_file_dir, mytime->tm_hour,mytime->tm_min, mytime->tm_sec);
-
-                    // name process.
-                    sprintf(wav_file_name, "%d_%d_%d.wav", mytime->tm_hour,mytime->tm_min, mytime->tm_sec);
-                    // printf("going to show wav_file_name: ");
-                    // printf("%s\n", wav_file_name);
-
-                    p_wav_file_name = strcat(wav_file_dir, wav_file_name);
-                    printf("\nYour record file is: %s\n", p_wav_file_name);
-                    printf("It will last for 5 seconds.\n");
-                    char *tmp_list[] = {
-                        "arecord", "-r",
-                        "16000",
-                        "-t",
-                        "wav",
-                        "-f",
-                        "S16_LE",
-                        "--duration=5",
-                        p_wav_file_name,
-                        NULL
-                    };
-                    // printf("going to strcpy process.\n");
-                    // strcpy(*arg_list, *tmp_list);How to cpoy the array of the points?
-
-                    //printf("enter child process.\n");
-                    // printf("H:%d  M:%d   S:%d\n", mytime->tm_hour, mytime->tm_min, mytime->tm_sec);
-                    execvp("arecord", tmp_list);
-                    printf("the exec (record) failed.\n");
+                    exec_arecord();
 
                 default:
                     // paretn, do wait job.
@@ -239,7 +245,6 @@ int main()
                     // paretn, do wait job.
                     wait(NULL);
                     printf("the childPid: %d\n", childPid);
-
             }
         }
     }

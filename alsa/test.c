@@ -14,24 +14,36 @@
 #include <math.h>
 #include <stdarg.h>
 #include <time.h>
+#include <dirent.h>
 
 int main()              
 {                  
-    struct tm * mytime;
-    time_t tmp;    
-    char wav_file_name[20];
-    // 必须以这种形式声明吗?
+    char wav_file_dir[100] = {"./record_repository"};
+    DIR *dirp = opendir(wav_file_dir);
+    struct dirent *dp;
+
+    int i = 0;
+    char *dir_item[50] = { NULL };
+
+    int cnt = 0;
+
+    while ( dp = readdir(dirp) ) {
+        printf("%s", dp->d_name);
+        printf("\n");
+        // strcpy(dir_item[i++], dp->d_name);
+        dir_item[i++] = dp->d_name;
+    }
+
+    cnt = i;
+    i = 0;
+
+    printf("*******************************\n");
+    while ( i < cnt ) {
+        printf("%s\n", dir_item[i++]);
+    }
 
 
-    time(&tmp);
-    mytime = localtime(&tmp);
-    printf("mytime got the value: %d_%d_%d.wav\n", mytime->tm_hour,mytime->tm_min, mytime->tm_sec);
+    closedir(dirp);
 
-    sprintf(wav_file_name, "%d_%d_%d.wav", mytime->tm_hour,mytime->tm_min, mytime->tm_sec);
-    // sprintf(wav_file_name, "%d", 666);
-
-    printf("going to show wav_file_name: ");
-    printf("%s\n", wav_file_name);
-
-    return 0;                                                                                    
+    return 0;
 } 

@@ -4,12 +4,16 @@
 #include <sys/wait.h>
 #include <sys/types.h>
 #include <stdio.h>
-#include <sys/types.h>
 #include <sys/stat.h>
 #include <fcntl.h>
 #include <string.h>
 #include <linux/input.h>
 #include <unistd.h>
+#include <string.h>
+#include <math.h>
+#include <stdarg.h>
+#include <time.h>
+#include <dirent.h>
 
 void bmp_show(char *bmp_name)
 {
@@ -71,7 +75,6 @@ void bmp_show(char *bmp_name)
 	close(fd_bmp);
 	
 	munmap(fp, 800*480*4);	
-	
 }
 
 void  get_xy(int *x, int *y)
@@ -120,14 +123,32 @@ void  get_xy(int *x, int *y)
 	close(fd_touch);
 }
 
-
-int main()
+void exec_arecord()
 {
-    
-    int x = 400;
-    int y = 240;
-    pid_t childPid;
-    char *arg_list[] = {
+    // get time.
+    struct tm * mytime;
+    time_t tmp;
+
+    char wav_file_dir[100] = {"./record_repository/test_\0"};
+
+    char *p_wav_file_name = NULL;
+
+    char wav_file_name[20];
+    // child, do execvp job.
+    // printf("coming into case 0.\n");
+
+    time(&tmp);
+    mytime = localtime(&tmp);
+    // printf("mytime got the value. %s%d_%d_%d.wav\n", wav_file_dir, mytime->tm_hour,mytime->tm_min, mytime->tm_sec);
+
+    // name process.
+    sprintf(wav_file_name, "%d_%d_%d.wav", mytime->tm_hour,mytime->tm_min, mytime->tm_sec);
+    // printf("going to show wav_file_name: ");
+    // printf("%s\n", wav_file_name);
+
+    p_wav_file_name = strcat(wav_file_dir, wav_file_name);
+
+    char *tmp_list[] = {
         "arecord",
         "-r",
         "16000",
@@ -136,11 +157,66 @@ int main()
         "-f",
         "S16_LE",
         "--duration=5",
-        "test.wav",
+        p_wav_file_name,
         NULL
     };
+    
+    printf("\nYour record file is: %s\n", p_wav_file_name);
+    printf("It will last for 5 seconds.\n");
+    // printf("going to strcpy process.\n");
+    // strcpy(*arg_list, *tmp_list);How to cpoy the array of the points?
 
-    bmp_show("/mnt/m.bmp");
+    //printf("enter child process.\n");
+    // printf("H:%d  M:%d   S:%d\n", mytime->tm_hour, mytime->tm_min, mytime->tm_sec);
+    execvp("arecord", tmp_list);
+    printf("the exec (record) failed.\n");
+}
+
+void exec_aplay()
+{
+    char wav_file_dir[100] = {"./record_repository"};
+    DIR *dirp = opendir(wav_file_dir);
+    struct dirent *dp;
+
+    int i = 0;
+    char *dir_item[200] = { NULL };
+
+    int cnt = 0;
+    char s[50];
+
+    printf("going to while\n");
+    while ( dp = readdir(dirp) ) {
+        // printf("\n");
+        // printf("aplay record_repository/%s\n", dp->d_name);
+        sprintf(s, "aplay record_repository/%s", dp->d_name);
+        printf("the s is: %s\n", s);
+        dir_item[i++] = s;
+    }
+
+    cnt = i;
+    i = 0;
+
+    printf("*******************************\n");
+    while ( i < cnt ) {
+        printf("%s\n", dir_item[i++]);
+    }
+
+    // system(dir_item[1]);
+
+    closedir(dirp);
+}
+
+int main()
+{
+    int x = 400;
+    int y = 240;
+    
+    pid_t childPid;
+    
+    char *arg_list[] = {NULL};
+
+    //bmp_show("/mnt/m.bmp");
+    bmp_show("/mnt/UI2.0.bmp");
 
     while(1) {
 
@@ -149,7 +225,7 @@ int main()
         printf("x= %d, y= %d\n", x, y);
 
         /*
-         * exit filed
+         * exit field
          * x = 0 - 300
          * y = 0 - 300
          */
@@ -157,12 +233,13 @@ int main()
             break;
 
         /*
-         * arecord (shell command)
-         * x > 300
+         * arecord field (shell command)
+         * x >= 722
+         * y <= 300
          */
-        if ( x >= 500 )
+        else if ( x >= 722 && y <= 300)
         {
-            printf("caught the touch!\n");
+            printf("caught your touch!\n");
 
             switch ( childPid = fork() ) {
                 case -1:
@@ -170,18 +247,26 @@ int main()
                     exit(1);
 
                 case 0:
-                    // child, do execvp job.
-                    printf("enter child process.\n");
-                    execvp("arecord", arg_list);
-                    printf("if exec failed.\n");
+                    exec_arecord();
 
                 default:
                     // paretn, do wait job.
                     wait(NULL);
-                    printf("the childPid: %d\n", childPid);
+                    printf("\nRecord done, and the childPid: %d\n\n", childPid);
             }
         }
-    }
 
+        /*
+         * aplay field
+         * x > 722
+         * y > 300
+         */
+        else if ( x > 722 && y > 300 )
+        {
+            printf("come into aplay field.\n");
+            exec_aplay();
+        }
+        
+    }
     return 0;
 }
