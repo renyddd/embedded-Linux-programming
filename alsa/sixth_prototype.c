@@ -77,7 +77,7 @@ void bmp_show(char *bmp_name)
 	munmap(fp, 800*480*4);	
 }
 
-void  get_xy(int *x, int *y)
+void get_xy(int *x, int *y)
 {
     //输入子系统 的 标准头文件
     // /usr/include/
@@ -172,38 +172,44 @@ void exec_arecord()
     printf("the exec (record) failed.\n");
 }
 
-void exec_aplay()
+int exec_aplay(int num)
 {
     char wav_file_dir[100] = {"./record_repository"};
     DIR *dirp = opendir(wav_file_dir);
     struct dirent *dp;
 
     int i = 0;
-    char *dir_item[200] = { NULL };
+    char dir_item[100][200];
 
     int cnt = 0;
     char s[50];
 
-    printf("going to while\n");
+    // printf("going to while\n");
     while ( dp = readdir(dirp) ) {
         // printf("\n");
         // printf("aplay record_repository/%s\n", dp->d_name);
         sprintf(s, "aplay record_repository/%s", dp->d_name);
         printf("the s is: %s\n", s);
-        dir_item[i++] = s;
+        // When the error [aplay: playback:2309: read error], these means '.' and '..'.
+        strcpy(dir_item[i++], s);
     }
 
     cnt = i;
     i = 0;
 
-    printf("*******************************\n");
+    // printf("*******************************\n");
+    /*
     while ( i < cnt ) {
-        printf("%s\n", dir_item[i++]);
-    }
+        //printf("dir_item[%d] is: %s",i , dir_item[i++]);
+        //printf("dir_item is: %s", dir_item[i++]);
+        system(dir_item[i++]);
+    }*/
 
-    // system(dir_item[1]);
-
+    system(dir_item[num]);
+    printf("aplay done.\n\n");
     closedir(dirp);
+
+    return num + 1;
 }
 
 int main()
@@ -215,6 +221,7 @@ int main()
     
     char *arg_list[] = {NULL};
 
+    int aplay_num = 0;
     //bmp_show("/mnt/m.bmp");
     bmp_show("/mnt/UI2.0.bmp");
 
@@ -230,7 +237,10 @@ int main()
          * y = 0 - 300
          */
         if ( x <= 300 && y <= 300 )
+        {
+            bmp_show("/mnt/m.bmp");
             break;
+        }
 
         /*
          * arecord field (shell command)
@@ -247,6 +257,7 @@ int main()
                     exit(1);
 
                 case 0:
+                    bmp_show("/mnt/stopRecord.bmp");
                     exec_arecord();
 
                 default:
@@ -264,9 +275,10 @@ int main()
         else if ( x > 722 && y > 300 )
         {
             printf("come into aplay field.\n");
-            exec_aplay();
+            bmp_show("/mnt/UI2.0.bmp");
+            aplay_num = exec_aplay(aplay_num);
         }
-        
     }
+        
     return 0;
 }
